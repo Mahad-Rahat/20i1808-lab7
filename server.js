@@ -1,43 +1,33 @@
-
-
-
 const express = require('express')
+const { dirname } = require('path')
+const path = require('path')
 const app = express()
-const cors = require('cors')
-const mongoose = require("mongoose")
-const User = require('../Model/user.js')
+const port = 3001
+const fs= require("fs");
 
-app.use(cors())
-app.use(express.json())
+const dbS=require("./db.js")
 
-mongoose.connect('mongodb://localhost:27017/Mern-APP')
+const bodyParser = require('body-parser')
+const { default: dbsend } = require('./db')
 
-app.post('/Login',  async(req, res) => {
-
-console.log(req.body)    
-
-try{
-
-     await User.Create({
-
-        username : req.body.username,
-       
-    })
-    res.json({status : 'ok'})
+app.use(bodyParser.urlencoded({extended: true}));
 
 
-} catch (err){
 
-    res.json({status : 'error', error : 'Duplicate Email'})
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname,'./HTML.html'))
+})
 
-}
+app.post('/check',function(req,res){
+ 
+ var n= String(req.body.name1);
 
-
+res.send("Your username is " + n);
+dbS. dbsend(n);
 
 })
 
-app.listen (3001, () => {
 
-console.log('Server running on 3001')
-
+app.listen(port, () => {
+  console.log(`Example app listening on port  http://localhost:${port}`)
 })
